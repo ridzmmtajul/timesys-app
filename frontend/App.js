@@ -3,7 +3,7 @@ import { Button, View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from './src/screens/Home';
-import Registration from './src/screens/Registration';
+import Registration from './src/screens/Register/Registration';
 
 function HomeScreen({ navigation }) {
   return (
