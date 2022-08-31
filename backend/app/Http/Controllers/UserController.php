@@ -14,7 +14,6 @@ class UserController extends Controller
 
     public function register(Request $request)
     {
-        dd($request->all());
         $response = (new UserService($request))->register();
         return response()->json($response);
     }
