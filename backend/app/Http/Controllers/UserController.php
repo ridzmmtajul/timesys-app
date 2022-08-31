@@ -20,6 +20,7 @@ class UserController extends Controller
     }
 
     public function login(Request $request){
-
+        $user = User::where('email', $request->email)->get();
+        return response()->json($user);
     }
 }
