@@ -7,7 +7,7 @@ import {
   Text,
 } from "react-native";
 
-function Form(props) {
+function LoginForm(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -73,4 +73,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Form;
+export default LoginForm;

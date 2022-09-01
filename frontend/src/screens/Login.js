@@ -1,18 +1,33 @@
 import axios from "axios";
-import { StyleSheet, Text, View, Image, Linking } from "react-native";
-import Form from "./Form";
-import {BASE_URL} from "@env";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableHighlight,
+} from "react-native";
+import { useState } from "react";
+import { BASE_URL } from "@env";
+
+import Form from "../components/LoginForm.js";
+import RegistrationForm from "../components/RegistrationForm.js";
 
 function Login() {
+  const [modalIsVisible, setModalIsVisible] = useState(false);
 
   function onLogin(data) {
-    axios.post(`${BASE_URL}/api/login`, { params: data })
-    .then((response) => {
-      console.log(response.data)
-    })
-    .catch((error) => {
-      console.log(error)
-    })
+    axios
+      .post(`${BASE_URL}/api/login`, { params: data })
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  function showDialog() {
+    setModalIsVisible(!modalIsVisible);
   }
 
   return (
@@ -22,7 +37,7 @@ function Login() {
           <Text style={styles.headerText1}>
             <Image
               style={styles.headerLogo}
-              source={require("./../../../assets/logo-mini.png")}
+              source={require("./../../assets/logo-mini.png")}
             />
             Time
             <Text style={styles.headerText2}>Sys</Text>
@@ -31,7 +46,7 @@ function Login() {
         <View style={styles.center}>
           <Image
             style={styles.bg2}
-            source={require("./../../../assets/bg2.png")}
+            source={require("./../../assets/bg2.png")}
           />
         </View>
       </View>
@@ -49,14 +64,13 @@ function Login() {
         <View style={styles.inline}>
           <Text style={{ color: "white", marginLeft: 25 }}>
             Not yes registered?
-            <Text
-              style={styles.link}
-              onPress={() => Linking.openURL("http://google.com")}
-            >
-              Register Now
-            </Text>
+            <TouchableHighlight onPress={showDialog}>
+              <Text style={styles.link}>Register Now</Text>
+            </TouchableHighlight>
           </Text>
         </View>
+
+        {modalIsVisible && <RegistrationForm closeModal={showDialog}/> }
       </View>
     </View>
   );
