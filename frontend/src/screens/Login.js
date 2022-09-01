@@ -16,6 +16,7 @@ function Login() {
   const [modalIsVisible, setModalIsVisible] = useState(false);
 
   function onLogin(data) {
+    console.log(BASE_URL);
     axios
       .post(`${BASE_URL}/api/login`, { params: data })
       .then((response) => {
