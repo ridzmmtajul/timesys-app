@@ -64,7 +64,7 @@ function Login() {
         <View style={styles.inline}>
           <Text style={{ color: "white", marginLeft: 25 }}>
             Not yes registered?
-            <TouchableHighlight onPress={showDialog}>
+            <TouchableHighlight onPress={showDialog} underlayColor="none">
               <Text style={styles.link}>Register Now</Text>
             </TouchableHighlight>
           </Text>

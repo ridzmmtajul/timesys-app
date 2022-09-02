@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useState } from "react";
 import {
   StyleSheet,
@@ -13,8 +14,14 @@ import Icon from "react-native-ico-material-design";
 function RegistrationForm(props) {
   const [adminSecretKey, setAdminSecretKey] = useState("");
   const [employeeNo, setEmployeeNo] = useState("");
+  const [name, setName] = useState("");
+  const [office, setOffice] = useState("");
+  const [division, setDivision] = useState("");
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  const SERVER_URL = "http://192.168.1.137:94";
 
   function login() {
     const formData = {
@@ -30,6 +37,30 @@ function RegistrationForm(props) {
 
   function cancel() {
     props.closeModal();
+  }
+
+  function checkEmployeeNo(value) {
+    setEmployeeNo(value);
+
+    axios
+      .get(`${SERVER_URL}/employee/${value}`)
+      .then((response) => {
+        const employee = response.data.employee;
+
+        var fullName =
+          employee.last_name +
+          ", " +
+          employee.first_name +
+          " " +
+          employee.middle_name;
+
+        setName(fullName ? fullName : "");
+        setOffice(employee.office ? employee.office.name : "");
+        setDivision(employee.office_division ? employee.office_division.code : "");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   return (
@@ -66,9 +97,16 @@ function RegistrationForm(props) {
           <TextInput
             style={styles.input}
             placeholder="Employee No."
-            onChangeText={setEmployeeNo}
+            onChangeText={checkEmployeeNo}
             value={employeeNo}
           />
+
+          <View style={styles.employee}>
+            <Text style={{ fontSize: 20 }}>{name}</Text>
+            <Text>
+              {office} {division && "- " + division}
+            </Text>
+          </View>
 
           <Text style={styles.label}>
             Username
@@ -143,6 +181,15 @@ const styles = StyleSheet.create({
   },
   requiredInput: {
     color: "red",
+  },
+  employee: {
+    borderWidth: 1,
+    borderColor: "gray",
+    padding: 10,
+    margin: 10,
+    borderRadius: 5,
+    backgroundColor: "#F8F8F8",
+    borderStyle: "dashed",
   },
 });
 
