@@ -13,8 +13,9 @@ import {
 } from "react-native";
 import Icon from "react-native-ico-material-design";
 import InputScrollView from "react-native-input-scroll-view";
-import AwesomeAlert from 'react-native-awesome-alerts';
+import AwesomeAlert from "react-native-awesome-alerts";
 import { BASE_URL } from "@env";
+import ScanAdminSecretKey from "./ScanAdminSecretKey";
 
 function RegistrationForm(props) {
   const [adminSecretKey, setAdminSecretKey] = useState("");
@@ -24,12 +25,15 @@ function RegistrationForm(props) {
   const [division, setDivision] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
   const [showAlert, setShowAlert] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
+  const [showDetail, setShowDetail] = useState(false);
+  const [showScanner, setShowScanner] = useState(false);
 
   const SERVER_URL = "http://192.168.1.137:94";
 
-  function login() {
+  function register() {
     setShowLoader(true);
 
     const formData = {
@@ -71,41 +75,61 @@ function RegistrationForm(props) {
           " " +
           employee.middle_name;
 
+        setShowDetail(true);
         setName(fullName ? fullName : "");
         setOffice(employee.office ? employee.office.name : "");
-        setDivision(employee.office_division ? employee.office_division.code : "");
+        setDivision(
+          employee.office_division ? employee.office_division.code : ""
+        );
       })
       .catch((error) => {
         console.log(error);
+
+        setShowDetail(false);
       });
+  }
+
+  function getAdminSecretKey(value) {
+    setAdminSecretKey(value);
+    setShowScanner(false);
+    console.log(value);
   }
 
   return (
     <Modal>
       <InputScrollView>
-        <ImageBackground
-          source={require("./../../assets/bg1.png")}
-          resizeMode="cover"
-        >
-          <TouchableHighlight onPress={cancel} underlayColor="none">
-            <Icon name="left-arrow-key" style={styles.closeButton} />
-          </TouchableHighlight>
+        <TouchableHighlight onPress={cancel} underlayColor="none">
+          <Icon name="left-arrow-key" style={styles.closeButton} />
+        </TouchableHighlight>
 
-          <View style={{ margin: 50, marginLeft: 40 }}>
-            <Text style={styles.title}>Registration</Text>
-            <Text>Please enter all required fields</Text>
-          </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>
-              Admin Secret Key
-              <Text style={styles.requiredInput}> *</Text>
-            </Text>
+        <View style={{ margin: 50, marginLeft: 40 }}>
+          <Text style={styles.title}>Registration</Text>
+          <Text>Please enter all required fields</Text>
+        </View>
+        <View>
+          <Text style={styles.label}>
+            Admin Secret Key
+            <Text style={styles.requiredInput}> *</Text>
+          </Text>
+          <View style={styles.scanSection}>
             <TextInput
-              style={styles.input}
+              style={styles.scanIinput}
               placeholder="Admin Secret Key"
               onChangeText={setAdminSecretKey}
               value={adminSecretKey}
             />
+            <TouchableHighlight
+              onPress={() => setShowScanner(true)}
+              underlayColor="gray"
+            >
+              <Icon
+                name="switch-to-full-screen-button"
+                style={styles.scanIcon}
+                size={20}
+                color="#000"
+              />
+            </TouchableHighlight>
+          </View>
 
           <Text style={styles.label}>
             Employee No.
@@ -118,12 +142,14 @@ function RegistrationForm(props) {
             value={employeeNo}
           />
 
-          <View style={styles.employee}>
-            <Text style={{ fontSize: 20 }}>{name}</Text>
-            <Text>
-              {office} {division && "- " + division}
-            </Text>
-          </View>
+          {showDetail && (
+            <View style={styles.employee}>
+              <Text style={{ fontSize: 20 }}>{name}</Text>
+              <Text>
+                {office} {division && "- " + division}
+              </Text>
+            </View>
+          )}
 
           <Text style={styles.label}>
             Username
@@ -136,45 +162,48 @@ function RegistrationForm(props) {
             value={username}
           />
 
-            <Text style={styles.label}>
-              Password
-              <Text style={styles.requiredInput}> *</Text>
-            </Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Password"
-              onChangeText={setPassword}
-              value={password}
-              secureTextEntry={true}
-            />
-          </View>
+          <Text style={styles.label}>
+            Password
+            <Text style={styles.requiredInput}> *</Text>
+          </Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            onChangeText={setPassword}
+            value={password}
+            secureTextEntry={true}
+          />
+        </View>
 
-          <TouchableHighlight onPress={login} underlayColor="none">
-            <Text style={styles.loginButton}>Register</Text>
-          </TouchableHighlight>
-        </ImageBackground>
+        <TouchableHighlight onPress={register} underlayColor="none">
+          <Text style={styles.registerButton}>Register</Text>
+        </TouchableHighlight>
       </InputScrollView>
 
+      {showScanner && (
+        <ScanAdminSecretKey setAdminSecretKey={getAdminSecretKey} />
+      )}
+
       <AwesomeAlert
-          show={showLoader}
-          showProgress={true}
-          closeOnTouchOutside={false}
-          closeOnHardwareBackPress={false}
-          title="Loading, please wait"
+        show={showLoader}
+        showProgress={true}
+        closeOnTouchOutside={false}
+        closeOnHardwareBackPress={false}
+        title="Loading, please wait"
       />
       <AwesomeAlert
-          show={showAlert}
-          showProgress={false}
-          title="Success"
-          message="User successfully registered"
-          closeOnTouchOutside={false}
-          closeOnHardwareBackPress={false}
-          contentStyle={styles.alert}
-          showConfirmButton={true}
-          confirmText="OK"
-          confirmButtonColor="green"
-          onConfirmPressed={cancel}
-        />
+        show={showAlert}
+        showProgress={false}
+        title="Success"
+        message="User successfully registered"
+        closeOnTouchOutside={false}
+        closeOnHardwareBackPress={false}
+        contentStyle={styles.alert}
+        showConfirmButton={true}
+        confirmText="OK"
+        confirmButtonColor="green"
+        onConfirmPressed={cancel}
+      />
     </Modal>
   );
 }
@@ -186,7 +215,9 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 50,
-    margin: 12,
+    marginLeft: 30,
+    marginRight: 30,
+    marginTop: 10,
     borderWidth: 1,
     borderColor: "gray",
     padding: 15,
@@ -194,12 +225,11 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 5,
   },
-  loginButton: {
+  registerButton: {
     backgroundColor: "#6B9FD0",
     padding: 10,
     color: "white",
-    marginLeft: 30,
-    marginRight: 30,
+    margin: 30,
     borderRadius: 10,
     fontSize: 20,
     textAlign: "center",
@@ -216,7 +246,9 @@ const styles = StyleSheet.create({
     color: "gray",
   },
   label: {
-    marginLeft: 15,
+    marginLeft: 30,
+    marginTop: 10,
+    marginBottom: -5,
   },
   requiredInput: {
     color: "red",
@@ -233,6 +265,33 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: "#F8F8F8",
     borderStyle: "dashed",
+  },
+  scanSection: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    marginTop: 15
+  },
+  scanIcon: {
+    padding: 10,
+    marginRight: 25,
+    padding: 15,
+    borderRadius: 5,
+  },
+  scanIinput: {
+    flex: 1,
+    padding: 10,
+    backgroundColor: "#fff",
+    color: "#424242",
+    height: 50,
+    marginLeft: 30,
+    marginRight: 10,
+    borderWidth: 1,
+    borderColor: "gray",
+    fontSize: 20,
+    borderRadius: 5,
   },
 });
 

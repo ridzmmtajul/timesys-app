@@ -27,10 +27,6 @@ function Login() {
       });
   }
 
-  function showDialog() {
-    setModalIsVisible(!modalIsVisible);
-  }
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -65,13 +61,13 @@ function Login() {
         <View style={styles.inline}>
           <Text style={{ color: "white", marginLeft: 25 }}>
             Not yes registered?
-            <TouchableHighlight onPress={showDialog} underlayColor="none">
+            <TouchableHighlight onPress={() => setModalIsVisible(!modalIsVisible)} underlayColor="none">
               <Text style={styles.link}>Register Now</Text>
             </TouchableHighlight>
           </Text>
         </View>
 
-        {modalIsVisible && <RegistrationForm closeModal={showDialog}/> }
+        {modalIsVisible && <RegistrationForm closeModal={() => setModalIsVisible(!modalIsVisible)}/> }
       </View>
     </View>
   );
