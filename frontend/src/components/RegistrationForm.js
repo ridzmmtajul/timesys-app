@@ -19,11 +19,15 @@ import { BASE_URL } from "@env";
 function RegistrationForm(props) {
   const [adminSecretKey, setAdminSecretKey] = useState("");
   const [employeeNo, setEmployeeNo] = useState("");
+  const [name, setName] = useState("");
+  const [office, setOffice] = useState("");
+  const [division, setDivision] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
   const [showAlert, setShowAlert] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
+
+  const SERVER_URL = "http://192.168.1.137:94";
 
   function login() {
     setShowLoader(true);
@@ -50,6 +54,30 @@ function RegistrationForm(props) {
 
   function cancel() {
     props.closeModal();
+  }
+
+  function checkEmployeeNo(value) {
+    setEmployeeNo(value);
+
+    axios
+      .get(`${SERVER_URL}/employee/${value}`)
+      .then((response) => {
+        const employee = response.data.employee;
+
+        var fullName =
+          employee.last_name +
+          ", " +
+          employee.first_name +
+          " " +
+          employee.middle_name;
+
+        setName(fullName ? fullName : "");
+        setOffice(employee.office ? employee.office.name : "");
+        setDivision(employee.office_division ? employee.office_division.code : "");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   return (
@@ -79,27 +107,34 @@ function RegistrationForm(props) {
               value={adminSecretKey}
             />
 
-            <Text style={styles.label}>
-              Employee No.
-              <Text style={styles.requiredInput}> *</Text>
-            </Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Employee No."
-              onChangeText={setEmployeeNo}
-              value={employeeNo}
-            />
+          <Text style={styles.label}>
+            Employee No.
+            <Text style={styles.requiredInput}> *</Text>
+          </Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Employee No."
+            onChangeText={checkEmployeeNo}
+            value={employeeNo}
+          />
 
-            <Text style={styles.label}>
-              Username
-              <Text style={styles.requiredInput}> *</Text>
+          <View style={styles.employee}>
+            <Text style={{ fontSize: 20 }}>{name}</Text>
+            <Text>
+              {office} {division && "- " + division}
             </Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Username"
-              onChangeText={setUsername}
-              value={username}
-            />
+          </View>
+
+          <Text style={styles.label}>
+            Username
+            <Text style={styles.requiredInput}> *</Text>
+          </Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Username"
+            onChangeText={setUsername}
+            value={username}
+          />
 
             <Text style={styles.label}>
               Password
@@ -189,7 +224,16 @@ const styles = StyleSheet.create({
   alert: {
     width: 200,
     height: 100,
-  }
+  },
+  employee: {
+    borderWidth: 1,
+    borderColor: "gray",
+    padding: 10,
+    margin: 10,
+    borderRadius: 5,
+    backgroundColor: "#F8F8F8",
+    borderStyle: "dashed",
+  },
 });
 
 export default RegistrationForm;
