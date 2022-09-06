@@ -17,14 +17,18 @@ class UserController extends Controller
     {
         // $response = (new UserService($request))->register();
         // return response()->json($response);
-        $user = new User();
-        $user->admin_secret_key = $request->admin_secret_key;
-        $user->employee_id = 1;
-        $user->username = $request->username;
-        $user->password = Hash::make($request->password);
-        $user->save();
-
-        return response()->json(['message' => 'Successfully saved.']);
+        try{
+            $user = new User();
+            $user->admin_secret_key = $request->admin_secret_key;
+            $user->employee_id = 1;
+            $user->username = $request->username;
+            $user->password = Hash::make($request->password);
+            $user->save();
+    
+            return response()->json(['message' => 'Successfully saved.']);
+        }catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()]);
+        }
     }
 
     public function login(Request $request){
