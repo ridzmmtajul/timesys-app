@@ -44,15 +44,15 @@ function RegistrationForm(props) {
     };
 
     axios
-      .post(`${BASE_URL}/api/register`, formData)
+      .post(`https://9d85-58-69-90-11.ap.ngrok.io/api/register`, formData)
       .then((response) => {
         console.log(response.data);
-        setShowLoader(false);
         setShowAlert(true);
+        setShowLoader(false);
       })
       .catch((error) => {
         setShowLoader(false);
-        console.log(error);
+        console.log(error, BASE_URL);
       });
   }
 
@@ -120,7 +120,7 @@ function RegistrationForm(props) {
             />
             <TouchableHighlight
               onPress={() => setShowScanner(true)}
-              underlayColor="gray"
+              underlayColor="#007BFF"
             >
               <Icon
                 name="switch-to-full-screen-button"
@@ -262,6 +262,8 @@ const styles = StyleSheet.create({
     borderColor: "gray",
     padding: 10,
     margin: 10,
+    marginLeft: 30,
+    marginRight: 30,
     borderRadius: 5,
     backgroundColor: "#F8F8F8",
     borderStyle: "dashed",
@@ -272,11 +274,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#fff",
-    marginTop: 15
+    marginTop: 15,
+    borderWidth: 1,
+    borderColor: "gray",
+    borderRadius: 5,
+    marginLeft: 30,
+    marginRight: 30,
   },
   scanIcon: {
     padding: 10,
-    marginRight: 25,
+    marginRight: 10,
     padding: 15,
     borderRadius: 5,
   },
@@ -286,12 +293,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     color: "#424242",
     height: 50,
-    marginLeft: 30,
+    marginLeft: 5,
     marginRight: 10,
-    borderWidth: 1,
-    borderColor: "gray",
     fontSize: 20,
-    borderRadius: 5,
   },
 });
 
